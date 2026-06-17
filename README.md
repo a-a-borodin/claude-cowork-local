@@ -1,5 +1,7 @@
 # claude-cowork-local
 
+⚠️ Known Issue: Native Web Search and Web Fetch do not work through the local proxy layer (see Issue #1).
+
 Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) against
 **free OpenCode Zen models**, **OpenRouter**, and **OpenCode Go** through a
 self-hosted translation proxy. No Cloudflare account, no shared-IP rate
