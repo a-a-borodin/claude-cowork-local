@@ -9,7 +9,6 @@ import { streamAnthropicToOpenAI } from './translate/stream/anthropic-to-openai'
 
 const GO_UPSTREAM = "https://opencode.ai/zen/go/v1";
 const ZEN_UPSTREAM = "https://opencode.ai/zen/v1";
-const OPENROUTER_UPSTREAM = "https://openrouter.ai/api/v1";
 const DEFAULT_UPSTREAM = GO_UPSTREAM;
 const VISION_MODEL = "qwen3.6-plus";
 
@@ -47,12 +46,6 @@ function routeConfig(request: Request): RouteConfig {
   if (zenPath) {
     const { path: remaining, model } = extractModelSegment(zenPath);
     return { path: remaining, upstream: ZEN_UPSTREAM, modelOverride: model };
-  }
-
-  const orPath = stripPrefix(path, "/or") ?? stripPrefix(path, "/openrouter");
-  if (orPath) {
-    const { path: remaining, model } = extractModelSegment(orPath);
-    return { path: remaining, upstream: OPENROUTER_UPSTREAM, modelOverride: model };
   }
 
   const { path: remaining, model } = extractModelSegment(path);
@@ -206,8 +199,6 @@ async function handleRequest(request: Request): Promise<Response> {
     routes: {
       "/go": GO_UPSTREAM,
       "/zen": ZEN_UPSTREAM,
-      "/or": OPENROUTER_UPSTREAM,
-      "/openrouter": OPENROUTER_UPSTREAM,
     },
     endpoints: {
       "/v1/messages": "Anthropic → upstream (translated if upstream=openai)",

@@ -25,5 +25,4 @@ SOFTWARE.
 This project includes a derivative of `cucoleadan/opencode-cowork-proxy`
 (https://github.com/cucoleadan/opencode-cowork-proxy), also MIT licensed.
 The original copyright is retained in the source file headers where applicable.
-The only modification is the addition of an OpenRouter upstream prefix (`/or`,
-`/openrouter`) and a Bun-native entrypoint (`src/server.ts`).
+The only modification is the addition of a Bun-native entrypoint (`src/server.ts`).

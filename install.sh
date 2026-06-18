@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # claude-cowork-local installer
 # Sets up a local Anthropic→OpenAI translation proxy and Claude Code settings
-# for using free Zen models, OpenRouter, and OpenCode Go in Claude Code CLI.
+# for using free Zen models and OpenCode Go in Claude Code CLI.
 
 set -euo pipefail
 
@@ -13,7 +13,6 @@ LOG_DIR="${XDG_LOG_HOME:-$HOME/.local/log}/claude-cowork-local"
 PROXY_PORT="${PROXY_PORT:-8787}"
 
 ZEN_KEY="${ZEN_KEY:-}"
-OR_KEY="${OR_KEY:-}"
 GO_KEY="${GO_KEY:-}"
 SKIP_SYSTEMD=0
 
@@ -68,14 +67,10 @@ collect_keys() {
   echo "  - Zen workspace key. Free models"
   echo "    work even without a payment method; paid models need a card."
   echo
-  echo "  - OpenRouter key."
-  echo "    Required only if you want the /or profile (full OpenRouter catalog)."
-  echo
   echo "  - Go key: same as Zen key. Required only for the /go profile (paid Go models)."
   echo "    Press Enter to skip any of them."
   echo
   prompt_secret ZEN_KEY "Zen key (sk-…)"
-  prompt_secret OR_KEY  "OpenRouter key (sk-or-v1-…)"
   if [ -z "$GO_KEY" ]; then GO_KEY="$ZEN_KEY"; fi
   prompt_secret GO_KEY  "Go key (defaults to Zen key)"
 }
@@ -85,7 +80,7 @@ write_settings() {
   blue "→ writing settings to $CLAUDE_DIR/"
   mkdir -p "$CLAUDE_DIR"
 
-  for profile in zen openrouter go; do
+  for profile in zen go; do
     src="$SETTINGS_DIR/settings.$profile.template.json"
     dst="$CLAUDE_DIR/settings.$profile.json"
     if [ ! -f "$src" ]; then
@@ -94,16 +89,12 @@ write_settings() {
     if [ "$profile" = "zen" ] && [ -z "$ZEN_KEY" ]; then
       yellow "skipping $profile (no ZEN_KEY)"; continue
     fi
-    if [ "$profile" = "openrouter" ] && [ -z "$OR_KEY" ]; then
-      yellow "skipping $profile (no OR_KEY)"; continue
-    fi
     if [ "$profile" = "go" ] && [ -z "$GO_KEY" ]; then
       yellow "skipping $profile (no GO_KEY)"; continue
     fi
 
     sed \
       -e "s|REPLACE_WITH_YOUR_ZEN_WORKSPACE_KEY|$ZEN_KEY|g" \
-      -e "s|REPLACE_WITH_YOUR_OPENROUTER_KEY|$OR_KEY|g" \
       "$src" > "$dst"
     chmod 600 "$dst"
     green "✓ $dst"
@@ -191,7 +182,6 @@ main() {
   echo
   echo "  Run Claude Code with a profile:"
   echo "    claude --settings $CLAUDE_DIR/settings.zen.json"
-  echo "    claude --settings $CLAUDE_DIR/settings.openrouter.json"
   echo "    claude --settings $CLAUDE_DIR/settings.go.json"
   echo
   echo "  Or copy any of them to $CLAUDE_DIR/settings.json to make it default."
