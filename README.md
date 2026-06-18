@@ -1,6 +1,6 @@
 # claude-cowork-local
 
-⚠️ Known Issue: Native Web Search and Web Fetch do not work through the local proxy layer (see Issue #1).
+⚠️ Native Web Search and Web Fetch do not work through the local proxy layer (see Issue #1).
 
 ---
 
