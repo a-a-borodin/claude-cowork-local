@@ -2,12 +2,11 @@
 
 ⚠️ Known Issue: Native Web Search and Web Fetch do not work through the local proxy layer (see Issue #1).
 
+---
+
 Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) against
 **free OpenCode Zen models** and **OpenCode Go** through a
 self-hosted translation proxy.
-
-A single install script produces a working setup with two pre-configured
-profiles you can launch with `claude --settings ~/.claude/settings.<profile>.json`.
 
 ---
 
@@ -21,7 +20,7 @@ This repository is a thin wrapper that:
 
 1. Runs the [cucoleadan/opencode-cowork-proxy](https://github.com/cucoleadan/opencode-cowork-proxy)
    worker locally on `http://localhost:8787` (using Bun, no build step).
-2. Generates ready-to-use `settings.*.json` profiles for Claude Code that
+2. Generates `settings.*.json` profiles for Claude Code that
    point at the local worker.
 3. Provides a small set of management commands (`cowork-start`, `cowork-stop`,
    `cowork-status`, `cowork-log`).
@@ -49,7 +48,7 @@ not subject to the shared rate limit.
 ## Quick start
 
 ```bash
-git clone ...
+git clone https://github.com/a-a-borodin/claude-cowork-local.git
 cd claude-cowork-local
 ./install.sh
 ```
@@ -76,7 +75,7 @@ claude --settings ~/.claude/settings.zen.json
 claude --settings ~/.claude/settings.go.json
 ```
 
-To make a profile the default (no `--settings` flag needed):
+To make a profile the default:
 
 ```bash
 cp ~/.claude/settings.zen.json ~/.claude/settings.json
@@ -99,19 +98,9 @@ No other system packages are required. The worker binds to
 
 ## API keys
 
-Two API keys are referenced across the profiles. The
+Two API keys (Zen and Go) are referenced across the profiles. The
 installer accepts any subset — profiles for which no key is provided are
 simply not generated.
-
-| Profile | Key format | Where to obtain | Card required |
-|---|---|---|---|
-| Zen (free tier) | `sk-…` | OpenCode workspace settings, under API keys | No for free models |
-| OpenCode Go | `sk-…` (same key as Zen) | Same as Zen | **Yes** — subscription required |
-
-The Zen and Go profiles share the same OpenCode workspace key. If the
-workspace has a payment method attached, both work; otherwise Go models
-return `401 No payment method`. The Zen profile works on free models
-without a payment method.
 
 ---
 
@@ -140,25 +129,9 @@ Available installer environment variables:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `ZEN_KEY` | *(prompted)* | OpenCode workspace API key |
+| `ZEN_KEY` | *(prompted)* | Zen API key |
 | `GO_KEY`  | `$ZEN_KEY` | Go API key (usually identical to `ZEN_KEY`) |
 | `PROXY_PORT` | `8787` | TCP port the worker binds to |
-
----
-
-## Usage
-
-### Switching profiles
-
-The two settings files in `~/.claude/` are independent configurations.
-Switch by passing `--settings` at launch:
-
-```bash
-claude --settings ~/.claude/settings.zen.json
-claude --settings ~/.claude/settings.go.json
-```
-
-To make one of them the implicit default, copy it to `~/.claude/settings.json`.
 
 ---
 
@@ -229,6 +202,7 @@ cowork-stop && cowork-start
 
 A new settings template at `settings/settings.groq.template.json` follows
 the same pattern as the existing two.
+
 ---
 
 ## Project structure
@@ -279,9 +253,3 @@ the source files.
 
 - `cucoleadan/opencode-cowork-proxy` — the upstream worker this package
   embeds.
-- [Bun](https://bun.sh) — the JavaScript runtime used to run the worker
-  with no build step.
-- [Hono](https://hono.dev) — the HTTP framework used by the worker.
-- [OpenCode](https://opencode.ai) — operator of the Zen and Go model
-  services.
-- [Anthropic](https://anthropic.com) — author of Claude Code.
